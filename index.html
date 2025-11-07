@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寻纹觅祖 - 姓氏传统纹样查询</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #8c2c23, #d4a017);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        h1 {
+            color: #8c2c23;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin: 30px 0;
+        }
+        
+        #search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        #search-button {
+            padding: 12px 20px;
+            background: #8c2c23;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .result-container {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .pattern-image {
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .pattern-description {
+            line-height: 1.6;
+            color: #555;
+            text-align: left;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">纹</div>
+        <h1>寻纹觅祖</h1>
+        <p>探寻姓氏背后的传统纹样之美</p>
+        
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="请输入您的姓氏...">
+            <button id="search-button">寻踪觅迹</button>
+        </div>
+        
+        <div class="result-container" id="result">
+            <h3 id="result-title"></h3>
+            <img class="pattern-image" id="pattern-image" src="" alt="传统纹样">
+            <div class="pattern-description" id="pattern-description"></div>
+        </div>
+    </div>
+
+    <script>
+        // 图片链接配置 - 请替换为您自己的图片链接
+        const imageHosting = {
+            li: 'https://example.com/li.jpg',      // 李姓-云雷纹
+            wang: 'https://s21.ax1x.com/2025/11/07/pZpUcz4.jpg',  // 王姓-蟠螭纹  
+            zhang: 'https://example.com/zhang.jpg', // 张姓-缠枝纹
+            default: 'https://example.com/default.jpg' // 默认纹样
+        };
+
+        // 纹样数据库
+        const patternDatabase = {
+            '李': {
+                name: '云雷纹',
+                image: imageHosting.li,
+                description: '云雷纹是一种古老的中国传统纹样，以连续的回旋线条构成，形似云朵和雷声的绵延不绝，象征着生生不息、源远流长。李姓作为中华大姓，此纹寓意家族人丁兴旺，传承悠久。'
+            },
+            '王': {
+                name: '蟠螭纹', 
+                image: imageHosting.wang,
+                description: '蟠螭纹是龙纹的一种，常装饰于青铜器、玉器之上。螭为无角之龙，姿态盘曲迂回，象征着力量、智慧与祥瑞。王姓为帝王之姓，与此雄健纹样相得益彰。'
+            },
+            '张': {
+                name: '缠枝纹',
+                image: imageHosting.zhang,
+                description: '缠枝纹以植物的枝蔓或藤蔓构成连续的波状曲线，枝叶繁茂，连绵不断，寓意吉庆祥和、万代绵长。张姓乃大姓，此纹样恰如家族开枝散叶，繁荣昌盛。'
+            }
+        };
+
+        // 功能实现
+        document.getElementById('search-button').addEventListener('click', function() {
+            const input = document.getElementById('search-input').value.trim();
+            if (!input) {
+                alert('请输入姓氏');
+                return;
+            }
+            
+            const surname = input.charAt(0);
+            const patternInfo = patternDatabase[surname] || {
+                name: '传统纹样',
+                image: imageHosting.default,
+                description: `非常有趣！${surname}姓蕴含着独特的历史文化。虽然我们尚未收录其专属纹样，但这正意味着中华文化的博大精深，等待我们共同探索。`
+            };
+            
+            document.getElementById('result-title').textContent = `${surname}氏纹样：${patternInfo.name}`;
+            document.getElementById('pattern-image').src = patternInfo.image;
+            document.getElementById('pattern-description').textContent = patternInfo.description;
+            document.getElementById('result').style.display = 'block';
+        });
+
+        // 回车键支持
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('search-button').click();
+            }
+        });
+    </script>
+</body>
+</html>
